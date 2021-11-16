@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+
 class MonochromePhoto:
     def __init__(self, pixArray, pixSize=10, gradation=5):
         self.image = np.array(pixArray)
@@ -16,6 +17,22 @@ class MonochromePhoto:
     def get_medium_color(self, x, y):
         return int(self.image[x:x + self.size, y:y + self.size].sum() / 3 // self.size ** 2 // self.grad * self.grad)
     
-initialImg = Image.open("img2.jpg")
-arr = MonochromePhoto(initialImg=initialImage, pixSize=int(input()), gradation=int(input())).get_monochrome_photo()
-arr.save('res.jpg')
+flag = 'no'
+while flag == 'no':
+    print('Введите название фото')
+    initialImg = Image.open('{}'.format(input()))
+    print('Выберите величину ячейки\n' +
+          'Размер должен быть инициализирован целым положительным числом')
+    picSize = int(input())
+    print('Выберите количество оттенков\n' +
+          'Количество должно быть инициализировано целым положительным числом')
+    grad = int(input())
+    arr = MonochromePhoto(initialImg, pixSize=picSize, gradation=grad).get_grey_image()
+    print('Введите название новой картинки')
+    name = input()
+    print('Введите формат нового фото(jpg, png и т.д.)')
+    formt = input()
+    arr.save('{}.{}'.format(name, formt))
+    print('Если хотите завершить сессию, наберите \'yes\', если нет-нажмите enter')
+    if input() == 'yes':
+        flag = 'yes'
