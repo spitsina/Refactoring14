@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 
 
+
 def get_mosaic_image(image, mosaic_size=10, gradation=4):
     threshold = 255 // gradation
     processed_image = np.array(image)
