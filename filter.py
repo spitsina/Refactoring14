@@ -1,28 +1,35 @@
 from PIL import Image
 import numpy as np
-img = Image.open("img2.jpg")
-arr = np.array(img)
-a = len(arr)
-a1 = len(arr[1])
-i = 0
-while i < a - 11:
-    j = 0
-    while j < a1 - 11:
-        s = 0
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                n1 = arr[n][n1][0]
-                n2 = arr[n][n1][1]
-                n3 = arr[n][n1][2]
-                M = n1 + n2 + n3
-                s += M
-        s = int(s // 100)
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                arr[n][n1][0] = int(s // 50) * 50
-                arr[n][n1][1] = int(s // 50) * 50
-                arr[n][n1][2] = int(s // 50) * 50
-        j = j + 10
-    i = i + 10
-res = Image.fromarray(arr)
-res.save('res.jpg')
+
+
+def get_mosaic_image(image, mosaic_size=10, gradation=4):
+    threshold = 255 // gradation
+    processed_image = np.array(image)
+    image_length = len(processed_image)
+    image_height = len(processed_image[1])
+    i = 0
+    while i < image_length - 1:
+        j = 0
+        while j < image_height - 1:
+            sector = processed_image[i: i + mosaic_size, j: j + mosaic_size]
+            color_sum = np.sum(sector)
+            average_color = int(color_sum // (mosaic_size ** 2))
+            set_color(int(average_color // threshold) * threshold / 3, processed_image, i, j, mosaic_size)
+            j += mosaic_size
+        i += mosaic_size
+
+    return Image.fromarray(np.uint8(processed_image))
+
+
+def set_color(new_color, source_color, i, j, size):
+    for sector_i in range(i, i + size):
+        for sector_j in range(j, j + size):
+            for color_id in range(3):
+                source_color[sector_i][sector_j][color_id] = new_color
+
+
+if __name__ == "__main__":
+    img = Image.open(f"{input('Input image name:')}.jpg")
+    res = get_mosaic_image(img, gradation= 6)
+    img_res = input("Input name result:")
+    res.save(f"{ img_res }.jpg")
